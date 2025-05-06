@@ -448,15 +448,6 @@ Recommend bindings:
   (when colourful-mode
     (font-lock-flush)))
 
-(when (boundp 'sly-connected-hook)
-  (add-hook 'sly-connected-hook 'colourful-font-lock-flush-when-lisp-connected))
-
-(when (boundp 'slime-connected-hook)
-  (add-hook 'slime-connected-hook 'colourful-font-lock-flush-when-lisp-connected))
-
-;; (add-hook 'post-command-hook 'colourful-block 0 t)
-;; (remove-hook 'post-command-hook 'colourful-block t)
-
 (provide 'colourful)
 
 ;;; colourful.el ends here
