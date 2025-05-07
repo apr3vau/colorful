@@ -26,6 +26,7 @@
 
 (defun colourful-collect-forms (point)
   "Collect forms inside ansexp from starting.
+
 Point should be putted at (|foo bar)"
   (cl-loop initially (setq end point)
            for end = (ignore-errors (scan-sexps end 1))
@@ -150,7 +151,8 @@ Point should be putted at (|foo bar)"
         (dolist (obj (colourful-read-string
                       (buffer-substring-no-properties start end)))
           (cl-pushnew (split-string (symbol-name obj) ":") lst)))
-      (funcall
+      (with-timeout (4)
+        (funcall
        lisp-eval
        `(cl:let (result)
          (cl:dolist (split (cl:quote ,lst))
@@ -187,7 +189,7 @@ Point should be putted at (|foo bar)"
               ))
              (cl:push (cl:cons split face) result)))
          result)
-       ))))
+       )))))
 
 (defun colourful-fontify-symbol-cl (start end)
   "Fontify Common Lisp Symbol"
@@ -212,7 +214,7 @@ Point should be putted at (|foo bar)"
 ;; Fontify Symbol - List - Symbol recursion
 
 (defun colourful-fontify-symbol (start end)
-  "Fontify a symbol, without prefix"
+  "Fontify a symbol, without prefix."
   (if (eq major-mode 'emacs-lisp-mode)
       (colourful-fontify-symbol-elisp start end)
     (when (or (and (fboundp 'sly-connected-p)
@@ -222,8 +224,7 @@ Point should be putted at (|foo bar)"
       (colourful-fontify-symbol-cl start end))))
 
 (defun colourful-fontify-single-form (start end)
-  "Fontify a single form, can be a symbol or a list, with prefix
-characters.
+  "Fontify a single form, can be a symbol or a list, with prefix characters.
 
 This function is used to separate prefix & form, colouring prefix
 characters, sending rest of the form to fontify-list or
@@ -433,11 +434,11 @@ expresion (typically defun)."
 ;; Minor mode definition
 
 (define-minor-mode colourful-mode
-  "Colourful highlight for lisp.
+  "Colourful highlight for Lisp.
 
 Recommend bindings:
-(add-hook 'emacs-lisp-mode-hook 'colourful-mode)
-(add-hook 'lisp-mode-hook 'colourful-mode)"
+\(add-hook 'emacs-lisp-mode-hook 'colourful-mode)
+\(add-hook 'lisp-mode-hook 'colourful-mode)"
   :group 'colourful
   (if colourful-mode
       (advice-add 'font-lock-fontify-keywords-region :around 'colourful-keyword-advice)
